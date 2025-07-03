@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pemesanan - CareShoe</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .form-section {
+            margin-bottom: 2.5rem;
+            padding: 2rem;
+            background-color: #f8f8f8;
+            border-radius: 10px;
+            border-left: 4px solid #000;
+        }
+        .form-section h3 {
+            color: #000;
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+        }
+        .radio-group { display: flex; flex-direction: column; gap: 1rem; }
+        .radio-option { display: flex; align-items: center; gap: 0.5rem; padding: 1rem; background-color: #fff; border-radius: 5px; border: 2px solid #ddd; cursor: pointer; transition: border-color 0.3s ease; }
+        .radio-option:hover { border-color: #000; }
+        .radio-option input[type="radio"] { width: auto; margin: 0; }
+        .radio-option input[type="radio"]:checked + span { font-weight: bold; color: #000; }
+        .order-summary { background-color: #fff; padding: 1.5rem; border-radius: 8px; border: 2px solid #ddd; }
+        .summary-item { display: flex; justify-content: space-between; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid #eee; }
+        .summary-item.total { font-weight: bold; font-size: 1.2rem; color: #000; border-bottom: none; margin-bottom: 0; }
+        .form-group small { color: #666; font-size: 0.9rem; margin-top: 0.5rem; display: block; }
+        @media (max-width: 768px) {
+            .radio-group { gap: 0.5rem; }
+            .radio-option { padding: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <h2>CareShoe</h2>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Beranda</a></li>
+                <li><a href="services.html">Layanan</a></li>
+                <li><a href="booking.html">Pesan</a></li>
+                <li><a href="tracking.html">Tracking</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <section class="page-header">
+        <div class="container">
+            <h1>Formulir Pemesanan</h1>
+            <p>Isi formulir di bawah untuk memesan layanan cuci sepatu</p>
+        </div>
+    </section>
+
+    <section class="content-section">
+        <div class="container">
+            <div class="form-container">
+                <form id="bookingForm" method="POST" enctype="multipart/form-data">
+                    
+                    <div class="form-section">
+                        <h3>Informasi Pribadi</h3>
+                        <div class="form-group">
+                            <label for="fullName">Nama Lengkap *</label>
+                            <input type="text" id="fullName" name="full_name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="whatsapp">Nomor WhatsApp *</label>
+                            <input type="tel" id="whatsapp" name="whatsapp_number" placeholder="08123456789" required>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Informasi Sepatu</h3>
+                        <div class="form-group">
+                            <label for="shoeType">Jenis Sepatu</label>
+                            <select id="shoeType" name="shoe_type">
+                                <option value="">Pilih jenis sepatu</option>
+                                <option value="sneakers">Sneakers</option>
+                                <option value="canvas">Canvas</option>
+                                <option value="leather">Kulit</option>
+                                <option value="suede">Suede</option>
+                                <option value="boots">Boots</option>
+                                <option value="formal">Formal</option>
+                                <option value="sport">Olahraga</option>
+                                <option value="other">Lainnya</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="service">Pilih Layanan *</label>
+                            <select id="service" name="service_id" required>
+                                <option value="">Pilih layanan</option>
+                                <option value="1" data-price="50000">Deep Clean - Rp 50.000</option>
+                                <option value="2" data-price="30000">Fast Clean - Rp 30.000</option>
+                                <option value="3" data-price="75000">Unyellowing - Rp 75.000</option>
+                                <option value="4" data-price="100000">Repaint - Rp 100.000</option>
+                                <option value="5" data-price="60000">Leather Care - Rp 60.000</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="shoePhoto">Upload Foto Sepatu (Opsional)</label>
+                            <input type="file" id="shoePhoto" name="shoe_photo" accept="image/*">
+                            <small>Format: JPG, PNG, maksimal 5MB</small>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Metode Pengantaran</h3>
+                        <div class="form-group">
+                            <label>Pilih Metode *</label>
+                            <div class="radio-group">
+                                <label class="radio-option">
+                                    <input type="radio" name="delivery_method" value="antar_sendiri" required>
+                                    <span>Antar Sendiri ke Outlet</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="delivery_method" value="dijemput_kurir" required>
+                                    <span>Dijemput Kurir</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group" id="addressGroup" style="display: none;">
+                            <label for="address">Alamat Lengkap *</label>
+                            <textarea id="address" name="address" rows="3" placeholder="Masukkan alamat lengkap untuk penjemputan"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="schedule">Jadwal Pengambilan/Pengantaran *</label>
+                            <input type="datetime-local" id="schedule" name="pickup_delivery_schedule" required>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Ringkasan Pesanan</h3>
+                        <div class="order-summary">
+                            <div class="summary-item">
+                                <span>Layanan:</span>
+                                <span id="selectedService">-</span>
+                            </div>
+                            <div class="summary-item">
+                                <span>Harga:</span>
+                                <span id="servicePrice">Rp 0</span>
+                            </div>
+                            <div class="summary-item total">
+                                <span>Total:</span>
+                                <span id="totalPrice">Rp 0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" id="submitBtn" class="btn" style="width: 100%; font-size: 1.2rem; padding: 15px;">
+                            Kirim Pesanan
+                        </button>
+                    </div>
+
+                    <div id="formMessage" style="margin-top: 15px; text-align: center; font-weight: bold;"></div>
+
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <h3>CareShoe</h3>
+                    <p>Sepatumu, Kembali Kinclong!</p>
+                </div>
+                <div class="footer-links">
+                    <a href="index.html">Beranda</a>
+                    <a href="services.html">Layanan</a>
+                    <a href="booking.html">Pesan</a>
+                    <a href="tracking.html">Tracking</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 CareShoe. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Handle delivery method change
+        document.querySelectorAll('input[name="delivery_method"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const addressGroup = document.getElementById('addressGroup');
+                const addressField = document.getElementById('address');
+                if (this.value === 'dijemput_kurir') {
+                    addressGroup.style.display = 'block';
+                    addressField.required = true;
+                } else {
+                    addressGroup.style.display = 'none';
+                    addressField.required = false;
+                    addressField.value = '';
+                }
+            });
+        });
+
+        // Handle service selection and price calculation
+        document.getElementById('service').addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const serviceName = selectedOption.text;
+            const price = selectedOption.getAttribute('data-price');
+            document.getElementById('selectedService').textContent = serviceName || '-';
+            if (price) {
+                const formattedPrice = 'Rp ' + parseInt(price).toLocaleString('id-ID');
+                document.getElementById('servicePrice').textContent = formattedPrice;
+                document.getElementById('totalPrice').textContent = formattedPrice;
+            } else {
+                document.getElementById('servicePrice').textContent = 'Rp 0';
+                document.getElementById('totalPrice').textContent = 'Rp 0';
+            }
+        });
+
+        // Set minimum date to today
+        const scheduleInput = document.getElementById('schedule');
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        scheduleInput.min = now.toISOString().slice(0, 16);
+
+        // Auto-populate service from URL parameter
+        window.addEventListener('load', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const serviceParam = urlParams.get('service');
+            if (serviceParam) {
+                const serviceSelect = document.getElementById('service');
+                const options = serviceSelect.options;
+                for (let i = 0; i < options.length; i++) {
+                    if (options[i].text.toLowerCase().includes(serviceParam.replace('-', ' '))) {
+                        serviceSelect.selectedIndex = i;
+                        serviceSelect.dispatchEvent(new Event('change'));
+                        break;
+                    }
+                }
+            }
+        });
+
+        // Handle form submission with Fetch API
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const form = e.target;
+            const submitButton = document.getElementById('submitBtn');
+            const messageDiv = document.getElementById('formMessage');
+            const formData = new FormData(form);
+
+            submitButton.disabled = true;
+            submitButton.textContent = 'Mengirim...';
+            messageDiv.textContent = '';
+            
+            fetch('../backend/process_booking.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Server Error: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    messageDiv.style.color = 'green';
+                    messageDiv.textContent = 'Pesanan berhasil! Anda akan diarahkan...';
+                    setTimeout(() => {
+                        window.location.href = data.redirect_url;
+                    }, 1500);
+                } else {
+                    messageDiv.style.color = 'red';
+                    let errorMsg = data.message || 'Gagal memproses pesanan.';
+                    if (data.errors) {
+                        errorMsg += ' Rincian: ' + data.errors.join(', ');
+                    }
+                    messageDiv.textContent = errorMsg;
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Kirim Pesanan';
+                }
+            })
+            .catch(error => {
+                console.error('Fetch Error:', error);
+                messageDiv.style.color = 'red';
+                messageDiv.textContent = 'Gagal terhubung ke server. Periksa koneksi Anda.';
+                submitButton.disabled = false;
+                submitButton.textContent = 'Kirim Pesanan';
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Konfirmasi Pembayaran - CareShoe</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .confirmation-container{max-width:800px;margin:0 auto}.confirmation-section{background-color:#fff;padding:2rem;margin-bottom:2rem;border-radius:10px;box-shadow:0 5px 15px rgba(0,0,0,.1);border-left:4px solid #000}.confirmation-section h3{color:#000;margin-bottom:1.5rem;font-size:1.5rem}.order-details{background-color:#f8f8f8;padding:1.5rem;border-radius:8px}.detail-row{display:flex;justify-content:space-between;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:1px solid #ddd}.detail-row.total{font-weight:700;font-size:1.2rem;color:#000;border-bottom:2px solid #000;margin-top:1rem}.label{font-weight:500;color:#333}.value{color:#000;text-align:right}.payment-options{display:flex;flex-direction:column;gap:1rem;margin-bottom:2rem}.payment-option{cursor:pointer}.payment-card{display:flex;align-items:center;padding:1.5rem;background-color:#f8f8f8;border:2px solid #ddd;border-radius:10px;transition:all .3s ease}.payment-option input[type=radio]{display:none}.payment-option input[type=radio]:checked+.payment-card{border-color:#000;background-color:#fff;box-shadow:0 5px 15px rgba(0,0,0,.1)}.payment-icon{font-size:2rem;margin-right:1rem}.payment-info h4{margin-bottom:.5rem;color:#000}.payment-info p{color:#666;margin:0}.payment-details{background-color:#f0f8ff;padding:1.5rem;border-radius:8px;margin-top:1.5rem;border:1px dashed #007bff}.payment-details h4{color:#000;margin-bottom:1rem}.payment-note{color:#666;font-style:italic;margin-top:1rem}#pdfSection{text-align:center;padding:1.5rem;background-color:#f8f8f8;border-radius:8px}#downloadPdfBtn{display:inline-block;background-color:#6c757d;color:#fff;padding:12px 24px;border-radius:5px;text-decoration:none;font-weight:700;transition:all .3s ease}#downloadPdfBtn:hover{background-color:#5a6268}
+    </style>
+</head>
+<body>
+    <nav class="navbar"><div class="nav-container"><div class="nav-logo"><h2>CareShoe</h2></div><ul class="nav-menu"><li><a href="index.html">Beranda</a></li><li><a href="services.html">Layanan</a></li><li><a href="booking.html">Pesan</a></li><li><a href="tracking.html">Tracking</a></li></ul></div></nav>
+
+    <section class="page-header"><div class="container"><h1>Konfirmasi Pembayaran</h1><p>Terima kasih! Pesanan Anda telah kami terima. Silakan pilih metode pembayaran.</p></div></section>
+
+    <section class="content-section">
+        <div class="container">
+            <div class="confirmation-container">
+                
+                <!-- Ringkasan Pesanan -->
+                <div class="confirmation-section">
+                    <h3>Ringkasan Pesanan</h3>
+                    <div id="orderDetails" class="order-details">
+                        <div class="detail-row"><span class="label">Memuat data...</span></div>
+                    </div>
+                </div>
+
+                <!-- Pilihan Metode Pembayaran -->
+                <div class="confirmation-section">
+                    <h3>Pilih Metode Pembayaran</h3>
+                    <form id="paymentForm">
+                        <input type="hidden" id="orderIdInput" name="order_id" value="">
+                        <div class="payment-options">
+                            <label class="payment-option"><input type="radio" name="payment_method" value="transfer_bank" required><div class="payment-card"><div class="payment-icon">🏦</div><div class="payment-info"><h4>Transfer Bank</h4><p>Transfer manual ke rekening bank kami.</p></div></div></label>
+                            <label class="payment-option"><input type="radio" name="payment_method" value="qris" required><div class="payment-card"><div class="payment-icon">📱</div><div class="payment-info"><h4>QRIS</h4><p>Scan QR Code dengan e-wallet atau m-banking.</p></div></div></label>
+                            <label class="payment-option"><input type="radio" name="payment_method" value="cod" required><div class="payment-card"><div class="payment-icon">💵</div><div class="payment-info"><h4>Bayar di Tempat (COD)</h4><p>Bayar tunai saat kurir datang.</p></div></div></label>
+                        </div>
+
+                        <div id="transferDetails" class="payment-details" style="display:none;"><h4>Detail Transfer Bank</h4><p>Silakan transfer ke: <strong>BCA 1234567890 a/n CareShoe Indonesia</strong>. Mohon konfirmasi via WhatsApp setelah transfer.</p></div>
+                        <div id="qrisDetails" class="payment-details" style="display:none;"><h4>Pembayaran QRIS</h4><p>Kode QRIS akan ditampilkan di halaman tracking setelah Anda konfirmasi.</p></div>
+                        <div id="codDetails" class="payment-details" style="display:none;"><h4>Bayar di Tempat</h4><p>Tim kami akan menghubungi Anda untuk konfirmasi. Mohon siapkan uang pas.</p></div>
+                        
+                        <div class="form-group" style="margin-top: 2rem;">
+                            <button type="submit" id="confirmPaymentBtn" class="btn" style="width:100%; font-size:1.2rem; padding:15px;">Konfirmasi & Lanjutkan</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Unduh Struk -->
+                <div id="pdfSection" class="confirmation-section" style="display: none;">
+                     <h3>📄 Unduh Struk Digital</h3>
+                     <p>Simpan detail booking Anda sebagai bukti pemesanan.</p>
+                     <a href="#" id="downloadPdfBtn" target="_blank">📥 Download Struk (PDF)</a>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer"><div class="container"><p>&copy; 2025 CareShoe. All rights reserved.</p></div></footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const orderId = urlParams.get('order_id');
+    const detailsContainer = document.getElementById('orderDetails');
+    
+    if (!orderId) {
+        detailsContainer.innerHTML = `<div class="detail-row"><span style="color:red;">Error: ID Pesanan tidak ditemukan.</span></div>`;
+        return;
+    }
+
+    document.getElementById('orderIdInput').value = orderId;
+
+    // --- Ambil dan Tampilkan Detail Pesanan ---
+    // PENYESUAIAN: Mengirim parameter 'type' dan 'value' agar sesuai dengan backend
+    fetch(`../backend/track_order.php?type=order_id&value=${orderId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.order) {
+                const order = data.order;
+                const formatPrice = (p) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(p);
+                const formatDate = (d) => new Date(d).toLocaleString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+                const deliveryMethod = order.delivery_method === 'antar_sendiri' ? 'Antar Sendiri' : 'Dijemput Kurir';
+
+                let addressRow = '';
+                if (order.address) {
+                    addressRow = `<div class="detail-row"><span class="label">Alamat:</span><span class="value">${order.address}</span></div>`;
+                }
+
+                detailsContainer.innerHTML = `
+                    <div class="detail-row"><span class="label">ID Pesanan:</span><span class="value">#${order.id}</span></div>
+                    <div class="detail-row"><span class="label">Nama:</span><span class="value">${order.full_name}</span></div>
+                    <div class="detail-row"><span class="label">WhatsApp:</span><span class="value">${order.whatsapp_number}</span></div>
+                    <div class="detail-row"><span class="label">Layanan:</span><span class="value">${order.service_name}</span></div>
+                    <div class="detail-row"><span class="label">Metode Pengantaran:</span><span class="value">${deliveryMethod}</span></div>
+                    ${addressRow}
+                    <div class="detail-row"><span class="label">Jadwal:</span><span class="value">${formatDate(order.pickup_delivery_schedule)}</span></div>
+                    <div class="detail-row total"><span class="label">Total Harga:</span><span class="value">${formatPrice(order.total_price)}</span></div>
+                `;
+
+                const pdfSection = document.getElementById('pdfSection');
+                const downloadBtn = document.getElementById('downloadPdfBtn');
+                downloadBtn.href = `../backend/generate_pdf.php?order_id=${orderId}`;
+                pdfSection.style.display = 'block';
+            } else {
+                detailsContainer.innerHTML = `<div class="detail-row"><span style="color:red;">Error: ${data.message || 'Gagal memuat data.'}</span></div>`;
+            }
+        }).catch(error => {
+            console.error('Fetch Error:', error);
+            detailsContainer.innerHTML = `<div class="detail-row"><span style="color:red;">Tidak dapat terhubung ke server.</span></div>`;
+        });
+
+    // --- Logika untuk Pilihan Pembayaran ---
+    const paymentRadios = document.querySelectorAll('input[name="payment_method"]');
+    const paymentDetails = document.querySelectorAll('.payment-details');
+
+    paymentRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            paymentDetails.forEach(detail => detail.style.display = 'none');
+            const detailToShow = document.getElementById(this.value.replace('_', '') + 'Details');
+            if(detailToShow) {
+                detailToShow.style.display = 'block';
+            }
+        });
+    });
+
+    // --- Logika untuk Konfirmasi Pembayaran ---
+    document.getElementById('paymentForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const submitBtn = document.getElementById('confirmPaymentBtn');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Memproses...';
+
+        fetch('../backend/process_payment.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Metode pembayaran berhasil disimpan! Anda akan diarahkan ke halaman pelacakan.');
+                window.location.href = `tracking.html?order_id=${orderId}`;
+            } else {
+                alert(`Error: ${data.message}`);
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Konfirmasi & Lanjutkan';
+            }
+        }).catch(error => {
+            alert('Gagal terhubung ke server. Silakan coba lagi.');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Konfirmasi & Lanjutkan';
+        });
+    });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tracking Pesanan - CareShoe</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .tracking-form-container{max-width:500px;margin:0 auto}.tracking-container{max-width:800px;margin:0 auto}.tracking-section{background-color:#fff;padding:2rem;margin-bottom:2rem;border-radius:10px;box-shadow:0 5px 15px rgba(0,0,0,.1);border-left:4px solid #000}.tracking-section h3{color:#000;margin-bottom:1.5rem;font-size:1.5rem}.order-info{background-color:#f8f8f8;padding:1.5rem;border-radius:8px}.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem}.info-item{display:flex;justify-content:space-between;padding:.8rem;background-color:#fff;border-radius:5px;border-left:4px solid #ddd}.info-item .label{font-weight:500;color:#333}.info-item .value{font-weight:700;color:#000}.info-item .value.status{padding:.3rem .8rem;border-radius:15px;font-size:.9rem;color:#fff;background-color:#666}.value.status.Diterima{background-color:#007bff}.value.status.Dijemput{background-color:#17a2b8}.value.status.Sedang-Dicuci{background-color:#ffc107;color:#000}.value.status.Selesai{background-color:#28a745}.value.status.Dalam-Pengiriman{background-color:#fd7e14}.value.status.Selesai-Diantar{background-color:#28a745}.progress-container{position:relative}.progress-steps{display:flex;flex-direction:column;gap:1.5rem}.progress-step{display:flex;align-items:flex-start;gap:1rem;padding:1.5rem;background-color:#f8f8f8;border-radius:10px;position:relative;opacity:.5;transition:all .3s ease}.progress-step.active{opacity:1;background-color:#fff;border-left:4px solid #000;box-shadow:0 3px 10px rgba(0,0,0,.1)}.progress-step.completed{opacity:1;background-color:#e8f5e8;border-left:4px solid #28a745}.step-icon{font-size:2rem;width:60px;height:60px;background-color:#ddd;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}.progress-step.active .step-icon{background-color:#000;color:#fff}.progress-step.completed .step-icon{background-color:#28a745;color:#fff}.step-content{flex:1}.step-content h4{margin-bottom:.5rem;color:#000;font-size:1.2rem}.step-content p{color:#666;margin-bottom:.5rem}.step-time{font-size:.9rem;color:#999;font-style:italic}.support-contact{text-align:center}.support-contact p{margin-bottom:1.5rem;color:#666}.contact-options{display:flex;justify-content:center;gap:1rem}.contact-btn{display:inline-block;padding:12px 24px;text-decoration:none;border-radius:25px;font-weight:700;transition:all .3s ease}.contact-btn.whatsapp{background-color:#25d366;color:#fff}.contact-btn.whatsapp:hover{background-color:#128c7e}.contact-btn.phone{background-color:#007bff;color:#fff}.contact-btn.phone:hover{background-color:#0056b3}#trackingError{color:red;text-align:center;margin-top:1rem;font-weight:700;padding:1rem;background-color:#ffebeb;border-radius:8px;display:none}@media (max-width:768px){.info-grid{grid-template-columns:1fr}.info-item{flex-direction:column;gap:.5rem}.progress-step{flex-direction:column;text-align:center}.contact-options{flex-direction:column;align-items:center}}
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar"><div class="nav-container"><div class="nav-logo"><h2>CareShoe</h2></div><ul class="nav-menu"><li><a href="index.html">Beranda</a></li><li><a href="services.html">Layanan</a></li><li><a href="booking.html">Pesan</a></li><li><a href="tracking.html">Tracking</a></li></ul></div></nav>
+
+    <!-- Page Header -->
+    <section class="page-header"><div class="container"><h1>Tracking Pesanan</h1><p>Lacak status pesanan cuci sepatu Anda</p></div></section>
+
+    <!-- Tracking Form -->
+    <section class="content-section">
+        <div class="container">
+            <div class="tracking-form-container">
+                <div class="form-container">
+                    <h3>Masukkan Data Pesanan</h3>
+                    <form id="trackingForm">
+                        <div class="form-group"><label for="searchType">Cari berdasarkan:</label><select id="searchType" name="type"><option value="order_id">ID Pesanan</option><option value="phone">Nomor HP</option></select></div>
+                        <div class="form-group"><label for="searchValue" id="searchLabel">Masukkan ID Pesanan:</label><input type="text" id="searchValue" name="value" placeholder="Contoh: 15" required></div>
+                        <button type="submit" class="btn" style="width: 100%;">Lacak Pesanan</button>
+                    </form>
+                    <div id="trackingError"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tracking Results (awalnya tersembunyi) -->
+    <div id="trackingResultsContainer"></div>
+
+    <!-- Footer -->
+    <footer class="footer"><div class="container"><p>&copy; 2024 CareShoe. All rights reserved.</p></div></footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // Fungsi untuk mengubah label input berdasarkan pilihan
+    document.getElementById('searchType').addEventListener('change', function() {
+        const searchLabel = document.getElementById('searchLabel');
+        const searchValueInput = document.getElementById('searchValue');
+        if (this.value === 'order_id') {
+            searchLabel.textContent = 'Masukkan ID Pesanan:';
+            searchValueInput.placeholder = 'Contoh: 15';
+        } else {
+            searchLabel.textContent = 'Masukkan Nomor HP:';
+            searchValueInput.placeholder = 'Contoh: 08123456789';
+        }
+        searchValueInput.value = '';
+    });
+
+    // Fungsi utama saat form di-submit
+    document.getElementById('trackingForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const params = new URLSearchParams(formData);
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const errorDiv = document.getElementById('trackingError');
+        const resultsContainer = document.getElementById('trackingResultsContainer');
+
+        // Reset UI
+        submitBtn.textContent = 'Mencari...';
+        submitBtn.disabled = true;
+        errorDiv.style.display = 'none';
+        resultsContainer.innerHTML = '';
+
+        // Panggil backend
+        fetch(`../backend/track_order.php?${params.toString()}`)
+            .then(response => response.json())
+            .then(data => {
+                // --- PENYESUAIAN: Tambahkan log ini untuk debugging ---
+                console.log('Data yang diterima dari server:', data);
+
+                if (data.success) {
+                    // Tentukan apakah data berupa satu objek atau array
+                    const orders = data.order ? [data.order] : data.orders;
+                    if (orders && orders.length > 0) {
+                        orders.forEach(order => {
+                            resultsContainer.innerHTML += createOrderResultHTML(order);
+                        });
+                    } else {
+                        errorDiv.textContent = 'Data pesanan berhasil diterima tapi kosong.';
+                        errorDiv.style.display = 'block';
+                    }
+                } else {
+                    errorDiv.textContent = data.message;
+                    errorDiv.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+                errorDiv.textContent = 'Gagal terhubung ke server. Silakan coba lagi.';
+                errorDiv.style.display = 'block';
+            })
+            .finally(() => {
+                submitBtn.textContent = 'Lacak Pesanan';
+                submitBtn.disabled = false;
+            });
+    });
+
+    // Fungsi untuk membuat HTML dari satu data pesanan
+    function createOrderResultHTML(order) {
+        const formatPrice = (price) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(price);
+        const formatDate = (dateStr) => new Date(dateStr).toLocaleString('id-ID', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+        // Membuat status timeline
+        let timelineHTML = '';
+        if (order.status_timeline) {
+            order.status_timeline.forEach(item => {
+                const statusClass = item.completed ? 'completed' : (item.active ? 'active' : '');
+                const iconMap = { 'Diterima': '📋', 'Dijemput': '🚚', 'Sedang Dicuci': '🧽', 'Selesai': '✅', 'Dalam Pengiriman': '🏠', 'Selesai Diantar': '👍' };
+                const timestamp = item.completed ? formatDate(item.timestamp) : (item.active ? 'Sedang berlangsung...' : '-');
+
+                timelineHTML += `
+                    <div class="progress-step ${statusClass}">
+                        <div class="step-icon">${iconMap[item.label] || '⏳'}</div>
+                        <div class="step-content">
+                            <h4>${item.label}</h4>
+                            <span class="step-time">${timestamp}</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        
+        const statusClass = order.order_status.replace(/\s+/g, '-');
+
+        return `
+        <section class="content-section bg-gray">
+            <div class="container">
+                <div class="tracking-container">
+                    <div class="tracking-section">
+                        <h3>Informasi Pesanan</h3>
+                        <div class="order-info">
+                            <div class="info-grid">
+                                <div class="info-item"><span class="label">ID Pesanan:</span><span class="value">${order.id}</span></div>
+                                <div class="info-item"><span class="label">Nama:</span><span class="value">${order.full_name}</span></div>
+                                <div class="info-item"><span class="label">Layanan:</span><span class="value">${order.service_name}</span></div>
+                                <div class="info-item"><span class="label">Total:</span><span class="value">${formatPrice(order.total_price)}</span></div>
+                                <div class="info-item"><span class="label">Tanggal Pesan:</span><span class="value">${formatDate(order.created_at)}</span></div>
+                                <div class="info-item"><span class="label">Status:</span><span class="value status ${statusClass}">${order.order_status}</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tracking-section">
+                        <h3>Status Pengerjaan</h3>
+                        <div class="progress-container"><div class="progress-steps">${timelineHTML}</div></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        `;
+    }
+
+    // Fungsi untuk otomatis melacak jika ada order_id di URL
+    window.addEventListener('load', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderId = urlParams.get('order_id');
+        if (orderId) {
+            document.getElementById('searchType').value = 'order_id';
+            document.getElementById('searchValue').value = orderId;
+            document.getElementById('trackingForm').dispatchEvent(new Event('submit'));
+        }
+    });
+});
+</script>
+</body>
+</html>
