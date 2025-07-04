@@ -468,10 +468,15 @@ body {
 
 /* Page Headers */
 .page-header {
-    background-color: #000;
-    color: #fff;
+    position: relative; /* Diperlukan untuk lapisan overlay */
+    color: #fff;       /* Mengubah warna teks menjadi putih agar terlihat */
     padding: 120px 0 60px;
     text-align: center;
+    
+    /* Ganti dengan path ke gambar Anda */
+    background-image: url('images/CareShoebg.png'); 
+    background-size: cover;      /* Memastikan gambar menutupi seluruh area */
+    background-position: center; /* Memposisikan gambar di tengah */
 }
 
 .page-header h1 {
