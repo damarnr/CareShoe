@@ -71,37 +71,37 @@ try {
                 <p>Admin Panel</p>
             </div>
             <ul class="sidebar-menu">
-    <li>
-        <a href="dashboard.php" class="active">
-            <i class="bi bi-grid-1x2-fill"></i> 
-            <span>Dashboard</span>
-        </a>
-    </li>
-    <li>
-        <a href="orders.php">
-            <i class="bi bi-card-list"></i> 
-            <span>Pesanan</span>
-        </a>
-    </li>
-    <li>
-        <a href="services.php">
-            <i class="bi bi-box-seam-fill"></i> 
-            <span>Layanan</span>
-        </a>
-    </li>
-    <li>
-        <a href="reports.php">
-            <i class="bi bi-bar-chart-line-fill"></i> 
-            <span>Laporan</span>
-        </a>
-    </li>
-    <li>
-        <a href="logout.php">
-            <i class="bi bi-box-arrow-right"></i> 
-            <span>Logout</span>
-        </a>
-    </li>
-</ul>
+            <li>
+                <a href="dashboard.php" class="active">
+                    <i class="bi bi-grid-1x2-fill"></i> 
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="orders.php">
+                    <i class="bi bi-card-list"></i> 
+                    <span>Pesanan</span>
+                </a>
+            </li>
+            <li>
+                <a href="services.php">
+                    <i class="bi bi-box-seam-fill"></i> 
+                    <span>Layanan</span>
+                </a>
+            </li>
+            <li>
+                <a href="reports.php">
+                    <i class="bi bi-bar-chart-line-fill"></i> 
+                    <span>Laporan</span>
+                </a>
+            </li>
+            <li>
+                <a href="logout.php">
+                    <i class="bi bi-box-arrow-right"></i> 
+                    <span>Logout</span>
+                </a>
+            </li>
+            </ul>
         </nav>
         
         <!-- Main Content -->

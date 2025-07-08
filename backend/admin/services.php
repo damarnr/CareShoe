@@ -81,7 +81,7 @@ try {
             </div>
             <ul class="sidebar-menu">
     <li>
-        <a href="dashboard.php" class="active">
+        <a href="dashboard.php">
             <i class="bi bi-grid-1x2-fill"></i> 
             <span>Dashboard</span>
         </a>
@@ -93,7 +93,7 @@ try {
         </a>
     </li>
     <li>
-        <a href="services.php">
+        <a href="services.php" class="active">
             <i class="bi bi-box-seam-fill"></i> 
             <span>Layanan</span>
         </a>

@@ -101,13 +101,13 @@ try {
             </div>
             <ul class="sidebar-menu">
     <li>
-        <a href="dashboard.php" class="active">
+        <a href="dashboard.php">
             <i class="bi bi-grid-1x2-fill"></i> 
             <span>Dashboard</span>
         </a>
     </li>
     <li>
-        <a href="orders.php">
+        <a href="orders.php" class="active">
             <i class="bi bi-card-list"></i> 
             <span>Pesanan</span>
         </a>
